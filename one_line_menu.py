@@ -65,7 +65,6 @@ import sys
 
 import board
 import touchio
-import board
 import adafruit_dotstar as dotstar
 
 
