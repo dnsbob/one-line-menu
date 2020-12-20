@@ -1,18 +1,18 @@
 #!/usr/bin/env micropython
-'''
+"""
 one_line_menu.py
 menu with one line and three buttons
 develop on micropython port on linux
 plan to use on Trinket M0
-'''
+"""
 
-'''
+"""
 # debug - shows that we are running micropython
 import sys
 print(sys.path)
-'''
+"""
 
-'''
+"""
 design own menu system?
 label (text), type (enum), value (text or num)
 
@@ -56,7 +56,7 @@ data=[
 'home',['rharold','yyyy','back',''],
 'play',['dnsbob','zzzz','back','']
 ]
-'''
+"""
 
 
 # imports
@@ -69,88 +69,90 @@ import board
 import adafruit_dotstar as dotstar
 
 
-
 # constants
-tick=.1
-bsp=chr(8) + " " + chr(8)   # backspace
-#bsp='.'     # for testing
+tick = 0.1
+bsp = chr(8) + " " + chr(8)  # backspace
+# bsp='.'     # for testing
 
 
 # One pixel connected internally!
 dot = dotstar.DotStar(board.APA102_SCK, board.APA102_MOSI, 1, brightness=0.2)
-dot[0]=(0,255,0) # green
+dot[0] = (0, 255, 0)  # green
 
 # variables
-touch1 = touchio.TouchIn(board.D1)   # red, space
-touch3 = touchio.TouchIn(board.D3)   # blue, dash
-touch4 = touchio.TouchIn(board.D4)   # yellow, dot
-buttons=[touch4,touch3,touch1]
+touch1 = touchio.TouchIn(board.D1)  # red, space
+touch3 = touchio.TouchIn(board.D3)  # blue, dash
+touch4 = touchio.TouchIn(board.D4)  # yellow, dot
+buttons = [touch4, touch3, touch1]
 
-action=['up','down','enter']
+action = ["up", "down", "enter"]
 
-data=[
-'work',['rharolde','xxxx','back','back'],
-'home',['rharold','yyyy','back','back'],
-'play',['minecraft',['dnsbob','zzzz','back',''],'back',''],
-#'back',''   # should not be here, just testing
+data = [
+    "work",
+    ["rharolde", "xxxx", "back", "back"],
+    "home",
+    ["rharold", "yyyy", "back", "back"],
+    "play",
+    ["minecraft", ["dnsbob", "zzzz", "back", ""], "back", ""],
+    #'back',''   # should not be here, just testing
 ]
 
-current=data
-stack=[]
-i=0
-print(current[i],end='')
-old=current[i]
-button_num=0
-button=buttons[0]
+current = data
+stack = []
+i = 0
+print(current[i], end="")
+old = current[i]
+button_num = 0
+button = buttons[0]
 while True:
-    #print("wait for button")
-    button_press=0
+    # print("wait for button")
+    button_press = 0
     while not button_press:
         for button_num, button in enumerate(buttons):
             if button.value:
-                button_press=1
-                dot[0] = (0,0,0) # off
+                button_press = 1
+                dot[0] = (0, 0, 0)  # off
                 break
-        time.sleep(tick)    # only if no button
-    dot[0]=(0,255,0) # green
-    '''
+        time.sleep(tick)  # only if no button
+    dot[0] = (0, 255, 0)  # green
+    """
     # temp use chars for buttons
     button_num = int(input())
     print('button:',action[button_num])
-    '''
+    """
 
-    #print("act on button",button_num)
-    c=current[i]
-    if action[button_num] == 'down':
-        i = (i+2)% len(current) # wrap at ends
-    elif action[button_num] == 'up':
-        i = (i-2) % len(current) # wrap
-    elif action[button_num] == 'enter':
-        v=current[i+1]
-        if type(v)==type('string'):
-            if c == 'back':
+    # print("act on button",button_num)
+    c = current[i]
+    if action[button_num] == "down":
+        i = (i + 2) % len(current)  # wrap at ends
+    elif action[button_num] == "up":
+        i = (i - 2) % len(current)  # wrap
+    elif action[button_num] == "enter":
+        v = current[i + 1]
+        if type(v) == type("string"):
+            if c == "back":
                 if stack:
-                    i=stack.pop()
-                    current=stack.pop()
-                    c=current[i]
+                    i = stack.pop()
+                    current = stack.pop()
+                    c = current[i]
             else:
-                print(v,end='')
-                old=c
-        elif type(v)==type(['list']):
-            old=current[i]
+                print(v, end="")
+                old = c
+        elif type(v) == type(["list"]):
+            old = current[i]
             stack.append(current)
             stack.append(i)
-            current=v
-            i=0
-    c=current[i]
-    if c != old:    # only print if changed
-        print("".join([bsp for x in range(len(old))]),end='')    # backspace to erase
-        print(current[i],end='')
-        old=c
-    '''
+            current = v
+            i = 0
+    c = current[i]
+    if c != old:  # only print if changed
+        print("".join([bsp for x in range(len(old))]), end="")  # backspace to erase
+        print(current[i], end="")
+        old = c
+    """
     else:
         print('no change, current[i]:',current[i])
-    '''
-    #print('wait for release')
+    """
+    # print('wait for release')
     while button.value:
-        time.sleep(tick)    # wait for button release
+        time.sleep(tick)  # wait for button release
